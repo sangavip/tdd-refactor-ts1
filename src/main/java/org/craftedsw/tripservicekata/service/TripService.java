@@ -7,28 +7,44 @@ import org.craftedsw.tripservicekata.dao.TripDAO;
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.model.Trip;
 import org.craftedsw.tripservicekata.model.User;
-import org.craftedsw.tripservicekata.model.UserSession;
 
 public class TripService {
 
-	public List<Trip> getTripsByUser(User user) throws UserNotLoggedInException {
-		List<Trip> tripList = new ArrayList<Trip>();
-		User loggedUser = UserSession.getInstance().getLoggedUser();
-		boolean isFriend = false;
-		if (loggedUser != null) {
-			for (User friend : user.getFriends()) {
-				if (friend.equals(loggedUser)) {
-					isFriend = true;
-					break;
-				}
-			}
-			if (isFriend) {
-				tripList = TripDAO.findTripsByUser(user);
-			}
-			return tripList;
+	/**
+	 * 
+	 * @param user
+	 * @return
+	 * @throws UserNotLoggedInException
+	 * @should _throw_exception_when_user_not_logged_in
+	 * @should _return_empty_trip_when_user_is_not_a_friend
+	 * @should _return_trip_list_when_user_is_a_friend
+	 */
+	public List<Trip> getTripsByUser(User user, User loggedInUser) throws UserNotLoggedInException {
+
+		isUserLoggedIn(loggedInUser);
+
+		if (user.isFriend(loggedInUser)) {
+			return findTripsByUser(user);
 		} else {
-			throw new UserNotLoggedInException();
+			return emptyTrips();
 		}
+
 	}
-	
+
+	private ArrayList<Trip> emptyTrips() {
+		return new ArrayList<Trip>();
+	}
+
+	// DAO class should be injected by the underlying framework
+	protected List<Trip> findTripsByUser(User user) {
+		return TripDAO.findTripsByUser(user);
+	}
+
+	private boolean isUserLoggedIn(User loggedInUser) throws UserNotLoggedInException {
+		if (loggedInUser != null) {
+			return true;
+		}
+		throw new UserNotLoggedInException();
+	}
+
 }
