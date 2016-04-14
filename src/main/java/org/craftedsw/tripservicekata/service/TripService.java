@@ -12,22 +12,20 @@ public class TripService {
 
 	/**
 	 * 
-	 * @param user
+	 * @param friendUser
 	 * @return
 	 * @throws UserNotLoggedInException
 	 * @should _throw_exception_when_user_not_logged_in
 	 * @should _return_empty_trip_when_user_is_not_a_friend
 	 * @should _return_trip_list_when_user_is_a_friend
 	 */
-	public List<Trip> getTripsByUser(User user, User loggedInUser) throws UserNotLoggedInException {
+	public List<Trip> getTripsByUser(User friendUser, User loggedInUser) throws UserNotLoggedInException {
 
 		isUserLoggedIn(loggedInUser);
 
-		if (user.isFriend(loggedInUser)) {
-			return findTripsByUser(user);
-		} else {
-			return emptyTrips();
-		}
+		return (friendUser.isFriend(loggedInUser)) 
+				? findTripsByUser(friendUser) 
+				: emptyTrips();
 
 	}
 
