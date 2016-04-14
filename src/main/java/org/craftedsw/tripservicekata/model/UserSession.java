@@ -1,4 +1,4 @@
-package org.craftedsw.tripservicekata.user;
+package org.craftedsw.tripservicekata.model;
 
 import org.craftedsw.tripservicekata.exception.CollaboratorCallException;
 
